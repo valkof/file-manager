@@ -1,10 +1,9 @@
+import { homedir } from "os";
+import { dirname } from "path";
 import { env, stdin, stdout } from "process";
 
 const args = process.argv[2];
-
-function getHomedir() {
-  return env.HOME || env.USERPROFILE;
-}
+env.rss_path = homedir();
 
 function getUserName() {
   if (!args.startsWith('--username=') || args.length < 12) {
@@ -19,10 +18,28 @@ function exitFileManager(userName) {
   process.exit(0);
 }
 
+function changePathUpDir() {
+  env.rss_path = dirname(env.rss_path);
+}
+
+function putPathToConsole() {
+  stdout.write('\n' + 'You are currently in ' + env.rss_path + '\n');
+}
+
 async function startFileManager(userName) {
   stdin.on('data', (data) => {
-    if (data.toString().trim() === '.exit') exitFileManager(userName);
-    stdout.write('\n' + 'You are currently in ' + getHomedir() + '\n');
+    if (data.toString().trim() === '.exit') {
+      exitFileManager(userName);
+      putPathToConsole();
+      return;
+    }
+    if (data.toString().trim() === 'up') {
+      changePathUpDir();
+      putPathToConsole();
+      return;
+    };
+    stdout.write('Invalid input\n');
+    putPathToConsole();
   });
   process.on('SIGINT', () => exitFileManager(userName));
 }
@@ -30,6 +47,7 @@ async function startFileManager(userName) {
 (async () => {
   const userName = getUserName();
   stdout.write(`Welcome to the File Manager, ${userName}`);
-  stdout.write('\n' + 'You are currently in ' + getHomedir() + '\n');
+  putPathToConsole();
+  
   await startFileManager(userName);
 })()
