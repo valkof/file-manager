@@ -1,6 +1,10 @@
-import { stdin, stdout } from "process";
+import { env, stdin, stdout } from "process";
 
 const args = process.argv[2];
+
+function getHomedir() {
+  return env.HOME || env.USERPROFILE;
+}
 
 function getUserName() {
   if (!args.startsWith('--username=') || args.length < 12) {
@@ -18,12 +22,14 @@ function exitFileManager(userName) {
 async function startFileManager(userName) {
   stdin.on('data', (data) => {
     if (data.toString().trim() === '.exit') exitFileManager(userName);
+    stdout.write('\n' + 'You are currently in ' + getHomedir() + '\n');
   });
   process.on('SIGINT', () => exitFileManager(userName));
 }
 
 (async () => {
   const userName = getUserName();
-  console.log(`Welcome to the File Manager, ${userName}`);
+  stdout.write(`Welcome to the File Manager, ${userName}`);
+  stdout.write('\n' + 'You are currently in ' + getHomedir() + '\n');
   await startFileManager(userName);
 })()
