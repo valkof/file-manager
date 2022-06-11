@@ -138,6 +138,25 @@ export const startFileManager = async (userName) => {
       return;
     };
 
+    //Move file
+    if (command === 'mv') {
+      const soursePath = option1;
+      const destinationPath = option2;
+      const absSourcePath = createAbsolutePath(soursePath);
+      const absDestinationPath = join(createAbsolutePath(destinationPath), basename(absSourcePath));
+      try {
+        await copyFile(absSourcePath, absDestinationPath);
+        await deleteFile(absSourcePath).then(() => {
+          stdout.write('The file is moved\n');
+        });
+      } catch {
+        stdout.write('Invalid input\n');
+      } finally {
+        putPathToConsole();
+      };
+      return;
+    };
+
     stdout.write('Invalid input\n');
     putPathToConsole();
   });
