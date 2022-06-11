@@ -8,6 +8,7 @@ import { renameFile } from "./fs/rename.js";
 import { copyFile } from "./fs/copy.js";
 import { createAbsolutePath } from "./nav/path.js";
 import { putPathToConsole } from "./nav/pathToConsole.js";
+import { deleteFile } from "./fs/delete.js";
 
 const args = process.argv[2];
 env.rss_path = homedir();
@@ -115,6 +116,20 @@ export const startFileManager = async (userName) => {
       const absDestinationPath = join(createAbsolutePath(destinationPath), basename(absSourcePath));
       await copyFile(absSourcePath, absDestinationPath).then(() => {
         stdout.write('The file is copied\n');
+      }).catch(() => {
+        stdout.write('Invalid input\n');
+      }).finally(() => {
+        putPathToConsole();
+      });
+      return;
+    };
+
+    //Delete file
+    if (command === 'rm') {
+      const soursePath = option1;
+      const absSourcePath = createAbsolutePath(soursePath);
+      await deleteFile(absSourcePath).then(() => {
+        stdout.write('The file is deleted\n');
       }).catch(() => {
         stdout.write('Invalid input\n');
       }).finally(() => {
