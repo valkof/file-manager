@@ -2,6 +2,7 @@ import { access, readdir } from "fs/promises";
 import { homedir } from "os";
 import { dirname, isAbsolute, join } from "path";
 import { env, stdin, stdout } from "process";
+import { createFileCurrentDirectory } from "./fs/create.js";
 import { readContentFile } from "./fs/read.js"
 import { createAbsolutePath } from "./nav/path.js";
 import { putPathToConsole } from "./nav/pathToConsole.js";
@@ -59,6 +60,8 @@ export const startFileManager = async (userName) => {
       
       return;
     };
+
+    //Read file and print it's content in console
     if (data.toString().startsWith('cat ')) {
       const destinationPath = data.toString().trim().slice(4);
       const absDestinationPath = createAbsolutePath(destinationPath);
@@ -69,6 +72,21 @@ export const startFileManager = async (userName) => {
       });
       return;
     };
+
+    //Create empty file in current working directory
+    if (data.toString().startsWith('add ')) {
+      const nameFile = data.toString().trim().slice(4);
+      const absDestinationPath = createAbsolutePath(`./${nameFile}`);
+      await createFileCurrentDirectory(absDestinationPath).then(() => {
+        stdout.write('The file is created\n');
+      }).catch(() => {
+        stdout.write('Invalid input\n');
+      }).finally(() => {
+        putPathToConsole();
+      });
+      return;
+    };
+
     stdout.write('Invalid input\n');
     putPathToConsole();
   });
