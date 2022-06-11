@@ -4,6 +4,7 @@ import { dirname, isAbsolute, join } from "path";
 import { env, stdin, stdout } from "process";
 import { createFileCurrentDirectory } from "./fs/create.js";
 import { readContentFile } from "./fs/read.js"
+import { renameFile } from "./fs/rename.js";
 import { createAbsolutePath } from "./nav/path.js";
 import { putPathToConsole } from "./nav/pathToConsole.js";
 
@@ -29,17 +30,19 @@ function changePathUpDir() {
 
 export const startFileManager = async (userName) => {
   stdin.on('data', async (data) => {
-    if (data.toString().trim() === '.exit') {
+    const [command, option1, option2] = data.toString().trim().split(' ').filter((arg) => !!arg);
+
+    if (command === '.exit') {
       exitFileManager(userName);
       putPathToConsole();
       return;
     }
-    if (data.toString().trim() === 'up') {
+    if (command === 'up') {
       changePathUpDir();
       putPathToConsole();
       return;
     };
-    if (data.toString().trim() === 'ls') {
+    if (command === 'ls') {
       readdir(env.rss_path).then((dirents) => {
         console.log(dirents);
 
@@ -47,7 +50,7 @@ export const startFileManager = async (userName) => {
       putPathToConsole();
       return;
     };
-    if (data.toString().startsWith('cd ')) {
+    if (command === 'cd') {
       let destinationPath = data.toString().trim().slice(3);
       if (!isAbsolute(destinationPath)) destinationPath = join(env.rss_path, destinationPath);
       const existDirectory = access(destinationPath).then(() => {
@@ -62,7 +65,7 @@ export const startFileManager = async (userName) => {
     };
 
     //Read file and print it's content in console
-    if (data.toString().startsWith('cat ')) {
+    if (command === 'cat') {
       const destinationPath = data.toString().trim().slice(4);
       const absDestinationPath = createAbsolutePath(destinationPath);
       await readContentFile(absDestinationPath).catch(() => {
@@ -74,11 +77,27 @@ export const startFileManager = async (userName) => {
     };
 
     //Create empty file in current working directory
-    if (data.toString().startsWith('add ')) {
+    if (command === 'add') {
       const nameFile = data.toString().trim().slice(4);
       const absDestinationPath = createAbsolutePath(`./${nameFile}`);
       await createFileCurrentDirectory(absDestinationPath).then(() => {
         stdout.write('The file is created\n');
+      }).catch(() => {
+        stdout.write('Invalid input\n');
+      }).finally(() => {
+        putPathToConsole();
+      });
+      return;
+    };
+
+    //Rename file
+    if (command === 'rn') {
+      const destinationPath = option1;
+      const nameFile = option2;
+      const absDestinationPath = createAbsolutePath(destinationPath);
+      const newAbsDestinationPath = join(dirname(absDestinationPath), nameFile);
+      await renameFile(absDestinationPath, newAbsDestinationPath).then(() => {
+        stdout.write('The file is renamed\n');
       }).catch(() => {
         stdout.write('Invalid input\n');
       }).finally(() => {
