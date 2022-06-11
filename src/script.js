@@ -1,6 +1,10 @@
+import { access, readdir } from "fs/promises";
 import { homedir } from "os";
-import { dirname } from "path";
+import { dirname, isAbsolute, join } from "path";
 import { env, stdin, stdout } from "process";
+import { readContentFile } from "./fs/read.js"
+import { createAbsolutePath } from "./nav/path.js";
+import { putPathToConsole } from "./nav/pathToConsole.js";
 
 const args = process.argv[2];
 env.rss_path = homedir();
@@ -22,12 +26,8 @@ function changePathUpDir() {
   env.rss_path = dirname(env.rss_path);
 }
 
-function putPathToConsole() {
-  stdout.write('\n' + 'You are currently in ' + env.rss_path + '\n');
-}
-
-async function startFileManager(userName) {
-  stdin.on('data', (data) => {
+export const startFileManager = async (userName) => {
+  stdin.on('data', async (data) => {
     if (data.toString().trim() === '.exit') {
       exitFileManager(userName);
       putPathToConsole();
@@ -38,6 +38,37 @@ async function startFileManager(userName) {
       putPathToConsole();
       return;
     };
+    if (data.toString().trim() === 'ls') {
+      readdir(env.rss_path).then((dirents) => {
+        console.log(dirents);
+
+      });
+      putPathToConsole();
+      return;
+    };
+    if (data.toString().startsWith('cd ')) {
+      let destinationPath = data.toString().trim().slice(3);
+      if (!isAbsolute(destinationPath)) destinationPath = join(env.rss_path, destinationPath);
+      const existDirectory = access(destinationPath).then(() => {
+        env.rss_path = destinationPath;
+        putPathToConsole();
+      }).catch(() => {
+        console.log('Operation failed');
+        putPathToConsole();
+      });
+      
+      return;
+    };
+    if (data.toString().startsWith('cat ')) {
+      const destinationPath = data.toString().trim().slice(4);
+      const absDestinationPath = createAbsolutePath(destinationPath);
+      await readContentFile(absDestinationPath).catch(() => {
+        stdout.write('Invalid input\n');
+      }).finally(() => {
+        putPathToConsole();
+      });
+      return;
+    };
     stdout.write('Invalid input\n');
     putPathToConsole();
   });
@@ -46,7 +77,7 @@ async function startFileManager(userName) {
 
 (async () => {
   const userName = getUserName();
-  stdout.write(`Welcome to the File Manager, ${userName}`);
+  stdout.write(`Welcome to the File Manager, ${userName}!`);
   putPathToConsole();
   
   await startFileManager(userName);
