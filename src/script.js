@@ -1,10 +1,11 @@
 import { access, readdir } from "fs/promises";
 import { homedir } from "os";
-import { dirname, isAbsolute, join } from "path";
+import { basename, dirname, isAbsolute, join } from "path";
 import { env, stdin, stdout } from "process";
 import { createFileCurrentDirectory } from "./fs/create.js";
 import { readContentFile } from "./fs/read.js"
 import { renameFile } from "./fs/rename.js";
+import { copyFile } from "./fs/copy.js";
 import { createAbsolutePath } from "./nav/path.js";
 import { putPathToConsole } from "./nav/pathToConsole.js";
 
@@ -98,6 +99,22 @@ export const startFileManager = async (userName) => {
       const newAbsDestinationPath = join(dirname(absDestinationPath), nameFile);
       await renameFile(absDestinationPath, newAbsDestinationPath).then(() => {
         stdout.write('The file is renamed\n');
+      }).catch(() => {
+        stdout.write('Invalid input\n');
+      }).finally(() => {
+        putPathToConsole();
+      });
+      return;
+    };
+
+    //Copy file
+    if (command === 'cp') {
+      const soursePath = option1;
+      const destinationPath = option2;
+      const absSourcePath = createAbsolutePath(soursePath);
+      const absDestinationPath = join(createAbsolutePath(destinationPath), basename(absSourcePath));
+      await copyFile(absSourcePath, absDestinationPath).then(() => {
+        stdout.write('The file is copied\n');
       }).catch(() => {
         stdout.write('Invalid input\n');
       }).finally(() => {
