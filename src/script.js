@@ -11,6 +11,7 @@ import { putPathToConsole } from "./nav/pathToConsole.js";
 import { deleteFile } from "./fs/delete.js";
 import { getInfoAboutOs } from "./os/key.js";
 import { calculateHash } from "./hash/hash.js";
+import { compress } from "./zip/compress.js";
 
 const args = process.argv[2];
 env.rss_path = homedir();
@@ -177,6 +178,22 @@ export const startFileManager = async (userName) => {
       await calculateHash(absSourcePath).then((hex) => {
         stdout.write(`${hex}\n`);
       }).catch((e) => {
+        stdout.write('Invalid input\n');
+      }).finally(() => {
+        putPathToConsole();
+      });
+      return;
+    };
+
+    //Compress file (using Brotli algorithm)
+    if (command === 'compress') {
+      const soursePath = option1;
+      const destinationPath = option2;
+      const absSourcePath = createAbsolutePath(soursePath);
+      const absDestinationPath = join(createAbsolutePath(destinationPath), basename(absSourcePath));
+      await compress(absSourcePath, absDestinationPath).then(() => {
+        stdout.write('The file is compressed\n');
+      }).catch(() => {
         stdout.write('Invalid input\n');
       }).finally(() => {
         putPathToConsole();
