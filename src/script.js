@@ -8,7 +8,7 @@ import { renameFile } from "./fs/rename.mjs";
 import { copyFile } from "./fs/copy.mjs";
 import { createAbsolutePath } from "./nav/path.js";
 import { putPathToConsole } from "./nav/pathToConsole.js";
-import { deleteFile } from "./fs/delete.js";
+import { deleteFile } from "./fs/delete.mjs";
 import { getInfoAboutOs } from "./os/key.js";
 import { calculateHash } from "./hash/hash.mjs";
 import { compress } from "./zip/compress.mjs";
