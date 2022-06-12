@@ -2,7 +2,7 @@ import { access, readdir } from "fs/promises";
 import { homedir } from "os";
 import { basename, dirname, isAbsolute, join } from "path";
 import { env, stdin, stdout } from "process";
-import { createFileCurrentDirectory } from "./fs/create.js";
+import { createFileCurrentDirectory } from "./fs/create.mjs";
 import { readContentFile } from "./fs/read.mjs"
 import { renameFile } from "./fs/rename.js";
 import { copyFile } from "./fs/copy.js";
@@ -75,7 +75,7 @@ export const startFileManager = async (userName) => {
       const sourсePath = option1;
       const absSourсePath = createAbsolutePath(sourсePath);
       await readContentFile(absSourсePath).catch(() => {
-        stdout.write('Invalid input\n');
+        stdout.write('Operation failed\n');
       }).finally(() => {
         putPathToConsole();
       });
@@ -89,7 +89,7 @@ export const startFileManager = async (userName) => {
       await createFileCurrentDirectory(absDestinationPath).then(() => {
         stdout.write('The file is created\n');
       }).catch(() => {
-        stdout.write('Invalid input\n');
+        stdout.write('Operation failed\n');
       }).finally(() => {
         putPathToConsole();
       });
@@ -105,7 +105,7 @@ export const startFileManager = async (userName) => {
       await renameFile(absDestinationPath, newAbsDestinationPath).then(() => {
         stdout.write('The file is renamed\n');
       }).catch(() => {
-        stdout.write('Invalid input\n');
+        stdout.write('Operation failed\n');
       }).finally(() => {
         putPathToConsole();
       });
@@ -121,7 +121,7 @@ export const startFileManager = async (userName) => {
       await copyFile(absSourcePath, absDestinationPath).then(() => {
         stdout.write('The file is copied\n');
       }).catch(() => {
-        stdout.write('Invalid input\n');
+        stdout.write('Operation failed\n');
       }).finally(() => {
         putPathToConsole();
       });
@@ -135,7 +135,7 @@ export const startFileManager = async (userName) => {
       await deleteFile(absSourcePath).then(() => {
         stdout.write('The file is deleted\n');
       }).catch(() => {
-        stdout.write('Invalid input\n');
+        stdout.write('Operation failed\n');
       }).finally(() => {
         putPathToConsole();
       });
@@ -154,7 +154,7 @@ export const startFileManager = async (userName) => {
           stdout.write('The file is moved\n');
         });
       } catch {
-        stdout.write('Invalid input\n');
+        stdout.write('Operation failed\n');
       } finally {
         putPathToConsole();
       };
@@ -165,7 +165,7 @@ export const startFileManager = async (userName) => {
     if (command === 'os') {
       const key = option1;
       await getInfoAboutOs(key).catch((e) => {
-        stdout.write('Invalid input\n');
+        stdout.write('Operation failed\n');
       }).finally(() => {
         putPathToConsole();
       });
@@ -179,7 +179,7 @@ export const startFileManager = async (userName) => {
       await calculateHash(absSourcePath).then((hex) => {
         stdout.write(`${hex}\n`);
       }).catch((e) => {
-        stdout.write('Invalid input\n');
+        stdout.write('Operation failed\n');
       }).finally(() => {
         putPathToConsole();
       });
@@ -195,7 +195,7 @@ export const startFileManager = async (userName) => {
       await compress(absSourcePath, absDestinationPath).then(() => {
         stdout.write('The file is compressed\n');
       }).catch(() => {
-        stdout.write('Invalid input\n');
+        stdout.write('Operation failed\n');
       }).finally(() => {
         putPathToConsole();
       });
@@ -211,7 +211,7 @@ export const startFileManager = async (userName) => {
       await decompress(absSourcePath, absDestinationPath).then(() => {
         stdout.write('The file is decompressed\n');
       }).catch(() => {
-        stdout.write('Invalid input\n');
+        stdout.write('Operation failed\n');
       }).finally(() => {
         putPathToConsole();
       });
