@@ -5,7 +5,7 @@ import { env, stdin, stdout } from "process";
 import { createFileCurrentDirectory } from "./fs/create.mjs";
 import { readContentFile } from "./fs/read.mjs"
 import { renameFile } from "./fs/rename.mjs";
-import { copyFile } from "./fs/copy.js";
+import { copyFile } from "./fs/copy.mjs";
 import { createAbsolutePath } from "./nav/path.js";
 import { putPathToConsole } from "./nav/pathToConsole.js";
 import { deleteFile } from "./fs/delete.js";

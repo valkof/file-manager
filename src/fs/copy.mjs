@@ -1,4 +1,5 @@
-import * as fsp from "fs/promises";
+import { createReadStream, createWriteStream } from "fs";
+import { pipeline } from "stream/promises";
 
 /**
  * Copy file
@@ -6,7 +7,10 @@ import * as fsp from "fs/promises";
  * @param {string} destinationPath The new path to file
  */
 export const copyFile = async (soursePath, destinationPath) => {
-  await fsp.copyFile(soursePath, destinationPath).catch((e) => {
+  await pipeline(
+    createReadStream(soursePath),
+    createWriteStream(destinationPath)
+  ).catch((e) => {
     throw e;
   });
 };
