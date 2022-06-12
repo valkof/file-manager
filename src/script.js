@@ -3,7 +3,7 @@ import { homedir } from "os";
 import { basename, dirname, isAbsolute, join } from "path";
 import { env, stdin, stdout } from "process";
 import { createFileCurrentDirectory } from "./fs/create.js";
-import { readContentFile } from "./fs/read.js"
+import { readContentFile } from "./fs/read.mjs"
 import { renameFile } from "./fs/rename.js";
 import { copyFile } from "./fs/copy.js";
 import { createAbsolutePath } from "./nav/path.js";
@@ -72,9 +72,9 @@ export const startFileManager = async (userName) => {
 
     //Read file and print it's content in console
     if (command === 'cat') {
-      const destinationPath = option1;
-      const absDestinationPath = createAbsolutePath(destinationPath);
-      await readContentFile(absDestinationPath).catch(() => {
+      const sourсePath = option1;
+      const absSourсePath = createAbsolutePath(sourсePath);
+      await readContentFile(absSourсePath).catch(() => {
         stdout.write('Invalid input\n');
       }).finally(() => {
         putPathToConsole();
