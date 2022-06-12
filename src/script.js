@@ -6,10 +6,10 @@ import { createFileCurrentDirectory } from "./fs/create.mjs";
 import { readContentFile } from "./fs/read.mjs"
 import { renameFile } from "./fs/rename.mjs";
 import { copyFile } from "./fs/copy.mjs";
-import { createAbsolutePath } from "./nav/path.js";
-import { putPathToConsole } from "./nav/pathToConsole.js";
+import { createAbsolutePath } from "./nav/path.mjs";
+import { putPathToConsole } from "./nav/pathToConsole.mjs";
 import { deleteFile } from "./fs/delete.mjs";
-import { getInfoAboutOs } from "./os/key.js";
+import { getInfoAboutOs } from "./os/key.mjs";
 import { calculateHash } from "./hash/hash.mjs";
 import { compress } from "./zip/compress.mjs";
 import { decompress } from "./zip/decompress.mjs";
@@ -57,9 +57,9 @@ export const startFileManager = async (userName) => {
       return;
     };
     if (command === 'cd') {
-      let destinationPath = data.toString().trim().slice(3);
+      let destinationPath = option1;
       if (!isAbsolute(destinationPath)) destinationPath = join(env.rss_path, destinationPath);
-      const existDirectory = access(destinationPath).then(() => {
+      access(destinationPath).then(() => {
         env.rss_path = destinationPath;
         putPathToConsole();
       }).catch(() => {
