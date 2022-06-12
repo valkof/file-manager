@@ -10,6 +10,7 @@ import { createAbsolutePath } from "./nav/path.js";
 import { putPathToConsole } from "./nav/pathToConsole.js";
 import { deleteFile } from "./fs/delete.js";
 import { getInfoAboutOs } from "./os/key.js";
+import { calculateHash } from "./hash/hash.js";
 
 const args = process.argv[2];
 env.rss_path = homedir();
@@ -162,6 +163,20 @@ export const startFileManager = async (userName) => {
     if (command === 'os') {
       const key = option1;
       await getInfoAboutOs(key).catch((e) => {
+        stdout.write('Invalid input\n');
+      }).finally(() => {
+        putPathToConsole();
+      });
+      return;
+    };
+
+    //Calculate hash
+    if (command === 'hash') {
+      const soursePath = option1;
+      const absSourcePath = createAbsolutePath(soursePath);
+      await calculateHash(absSourcePath).then((hex) => {
+        stdout.write(`${hex}\n`);
+      }).catch((e) => {
         stdout.write('Invalid input\n');
       }).finally(() => {
         putPathToConsole();
