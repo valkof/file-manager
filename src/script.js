@@ -9,6 +9,7 @@ import { copyFile } from "./fs/copy.js";
 import { createAbsolutePath } from "./nav/path.js";
 import { putPathToConsole } from "./nav/pathToConsole.js";
 import { deleteFile } from "./fs/delete.js";
+import { getInfoAboutOs } from "./os/key.js";
 
 const args = process.argv[2];
 env.rss_path = homedir();
@@ -68,7 +69,7 @@ export const startFileManager = async (userName) => {
 
     //Read file and print it's content in console
     if (command === 'cat') {
-      const destinationPath = data.toString().trim().slice(4);
+      const destinationPath = option1;
       const absDestinationPath = createAbsolutePath(destinationPath);
       await readContentFile(absDestinationPath).catch(() => {
         stdout.write('Invalid input\n');
@@ -80,7 +81,7 @@ export const startFileManager = async (userName) => {
 
     //Create empty file in current working directory
     if (command === 'add') {
-      const nameFile = data.toString().trim().slice(4);
+      const nameFile = option1;
       const absDestinationPath = createAbsolutePath(`./${nameFile}`);
       await createFileCurrentDirectory(absDestinationPath).then(() => {
         stdout.write('The file is created\n');
@@ -154,6 +155,17 @@ export const startFileManager = async (userName) => {
       } finally {
         putPathToConsole();
       };
+      return;
+    };
+
+    //Get EOL
+    if (command === 'os') {
+      const key = option1;
+      await getInfoAboutOs(key).catch((e) => {
+        stdout.write('Invalid input\n');
+      }).finally(() => {
+        putPathToConsole();
+      });
       return;
     };
 
