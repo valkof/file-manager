@@ -12,6 +12,7 @@ import { deleteFile } from "./fs/delete.js";
 import { getInfoAboutOs } from "./os/key.js";
 import { calculateHash } from "./hash/hash.js";
 import { compress } from "./zip/compress.js";
+import { decompress } from "./zip/decompress.js";
 
 const args = process.argv[2];
 env.rss_path = homedir();
@@ -193,6 +194,22 @@ export const startFileManager = async (userName) => {
       const absDestinationPath = join(createAbsolutePath(destinationPath), basename(absSourcePath));
       await compress(absSourcePath, absDestinationPath).then(() => {
         stdout.write('The file is compressed\n');
+      }).catch(() => {
+        stdout.write('Invalid input\n');
+      }).finally(() => {
+        putPathToConsole();
+      });
+      return;
+    };
+
+    //Decompress file (using Brotli algorithm)
+    if (command === 'decompress') {
+      const soursePath = option1;
+      const destinationPath = option2;
+      const absSourcePath = createAbsolutePath(soursePath);
+      const absDestinationPath = join(createAbsolutePath(destinationPath), basename(absSourcePath));
+      await decompress(absSourcePath, absDestinationPath).then(() => {
+        stdout.write('The file is decompressed\n');
       }).catch(() => {
         stdout.write('Invalid input\n');
       }).finally(() => {
