@@ -1,13 +1,15 @@
 import { createHash } from "crypto";
-import { readFile } from "fs/promises";
+import { createReadStream } from "fs";
+import { pipeline } from "stream/promises";
 
 export const calculateHash = async (pathToFile) => {
   const hash = createHash('sha256');
-  const hashHex = await readFile(pathToFile, 'utf-8').then((content) => {
-    hash.update(content);
-    return hash.digest('hex');
-  }).catch((e) => {
+  const readStream = createReadStream(pathToFile);
+  await pipeline(
+    readStream,
+    hash
+  ).catch((e) => {
     throw e;
   });
-  return hashHex;
+  return hash.digest('hex');
 };
