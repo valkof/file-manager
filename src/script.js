@@ -10,7 +10,7 @@ import { createAbsolutePath } from "./nav/path.js";
 import { putPathToConsole } from "./nav/pathToConsole.js";
 import { deleteFile } from "./fs/delete.js";
 import { getInfoAboutOs } from "./os/key.js";
-import { calculateHash } from "./hash/hash.js";
+import { calculateHash } from "./hash/hash.mjs";
 import { compress } from "./zip/compress.js";
 import { decompress } from "./zip/decompress.js";
 
