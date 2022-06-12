@@ -4,7 +4,7 @@ import { basename, dirname, isAbsolute, join } from "path";
 import { env, stdin, stdout } from "process";
 import { createFileCurrentDirectory } from "./fs/create.mjs";
 import { readContentFile } from "./fs/read.mjs"
-import { renameFile } from "./fs/rename.js";
+import { renameFile } from "./fs/rename.mjs";
 import { copyFile } from "./fs/copy.js";
 import { createAbsolutePath } from "./nav/path.js";
 import { putPathToConsole } from "./nav/pathToConsole.js";
