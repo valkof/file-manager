@@ -11,8 +11,8 @@ import { putPathToConsole } from "./nav/pathToConsole.js";
 import { deleteFile } from "./fs/delete.js";
 import { getInfoAboutOs } from "./os/key.js";
 import { calculateHash } from "./hash/hash.mjs";
-import { compress } from "./zip/compress.js";
-import { decompress } from "./zip/decompress.js";
+import { compress } from "./zip/compress.mjs";
+import { decompress } from "./zip/decompress.mjs";
 
 const args = process.argv[2];
 env.rss_path = homedir();
